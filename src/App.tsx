@@ -3,7 +3,6 @@ import {
   ArrowRight,
   BookOpenCheck,
   CheckCircle2,
-  ChevronDown,
   CircleHelp,
   FileText,
   HeartHandshake,
