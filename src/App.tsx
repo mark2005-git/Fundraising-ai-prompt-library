@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import {
   ArrowRight,
   BookOpenCheck,
@@ -85,7 +85,7 @@ function App() {
     setCopyStatus("");
   };
 
-  const handleAssemble = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleAssemble = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitted(true);
     if (!selectedTemplate || validationIssues.length > 0) return;
