@@ -3,6 +3,8 @@ import {
   ArrowRight,
   BookOpenCheck,
   CheckCircle2,
+  Clipboard,
+  AlertCircle,
   CircleHelp,
   FileText,
   HeartHandshake,
@@ -15,6 +17,7 @@ import {
   Users,
 } from "lucide-react";
 import { PROMPT_TEMPLATES, type WorkflowId } from "./lib/templates";
+import { assemblePrompt, validateInputs, type PromptValues } from "./lib/promptEngine";
 
 const workflowCards = [
   {
@@ -54,9 +57,55 @@ const workflowCards = [
 
 function App() {
   const [selectedWorkflow, setSelectedWorkflow] = useState<WorkflowId | null>(null);
+  const [values, setValues] = useState<PromptValues>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [submitted, setSubmitted] = useState(false);
+  const [assembledPrompt, setAssembledPrompt] = useState("");
+  const [copyStatus, setCopyStatus] = useState("");
   const selectedTemplate = selectedWorkflow
     ? PROMPT_TEMPLATES.find((template) => template.id.split(".")[1] === selectedWorkflow)
     : null;
+  const validationIssues = selectedTemplate ? validateInputs(selectedTemplate.fields, values) : [];
+  const visibleIssues = validationIssues.filter((issue) => issue.field === "_form" || touched[issue.field] || submitted);
+  const issueFor = (fieldName: string) => visibleIssues.find((issue) => issue.field === fieldName)?.message;
+
+  const chooseWorkflow = (workflowId: WorkflowId | null) => {
+    setSelectedWorkflow(workflowId);
+    setValues({});
+    setTouched({});
+    setSubmitted(false);
+    setAssembledPrompt("");
+    setCopyStatus("");
+  };
+
+  const updateField = (name: string, value: string) => {
+    setValues((current) => ({ ...current, [name]: value }));
+    setTouched((current) => ({ ...current, [name]: true }));
+    setAssembledPrompt("");
+    setCopyStatus("");
+  };
+
+  const handleAssemble = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSubmitted(true);
+    if (!selectedTemplate || validationIssues.length > 0) return;
+    try {
+      setAssembledPrompt(assemblePrompt(selectedTemplate, values).prompt);
+      setCopyStatus("");
+    } catch {
+      setAssembledPrompt("");
+    }
+  };
+
+  const handleCopy = async () => {
+    if (!assembledPrompt) return;
+    try {
+      await navigator.clipboard.writeText(assembledPrompt);
+      setCopyStatus("Prompt copied to clipboard.");
+    } catch {
+      setCopyStatus("Copy was blocked by your browser. Select the prompt text and copy it manually.");
+    }
+  };
 
   return (
     <div className="app-shell">
@@ -151,7 +200,7 @@ function App() {
                     <span className="outcome-label">{card.outcome}</span>
                     <button
                       className={`open-workflow ${isSelected ? "is-selected" : ""}`}
-                      onClick={() => setSelectedWorkflow(isSelected ? null : card.id)}
+                      onClick={() => chooseWorkflow(isSelected ? null : card.id)}
                       aria-expanded={isSelected}
                     >
                       {isSelected ? "Selected" : "Explore workflow"}
@@ -165,10 +214,10 @@ function App() {
         </section>
 
         {selectedTemplate && (
-          <section className="selection-panel" aria-live="polite">
+          <section className="selection-panel builder-panel" aria-live="polite">
             <div className="selection-icon"><MessageSquareText size={20} /></div>
-            <div className="selection-content">
-              <span className="section-kicker">WORKFLOW SELECTED · VERSION {selectedTemplate.version}</span>
+            <div className="selection-content builder-content">
+              <span className="section-kicker">WORKFLOW BUILDER · VERSION {selectedTemplate.version}</span>
               <h3>{selectedTemplate.title}</h3>
               <p>{selectedTemplate.purpose}</p>
               <div className="selection-detail">
@@ -179,12 +228,101 @@ function App() {
                 <strong>Not for</strong>
                 <span>{selectedTemplate.doNotUseWhen[0]}</span>
               </div>
-              <div className="builder-notice">
-                <Sparkles size={16} />
-                <span>This workflow is selected. The guided input form and prompt preview are the next build step.</span>
+
+              <div className="form-intro">
+                <div>
+                  <span className="section-kicker">STEP 02 · ADD YOUR CONTEXT</span>
+                  <h4>Tell us what this message needs to do.</h4>
+                  <p>Use broad, verified information only. Do not enter donor names, contact details, or confidential records.</p>
+                </div>
+                <span className="required-note">* Required fields</span>
               </div>
+
+              <form className="workflow-form" onSubmit={handleAssemble} noValidate>
+                <div className="dynamic-fields">
+                  {selectedTemplate.fields.map((field) => {
+                    const error = issueFor(field.name);
+                    const value = values[field.name] ?? "";
+                    return (
+                      <div className={`form-field ${field.type === "textarea" ? "field-wide" : ""}`} key={field.name}>
+                        <label htmlFor={field.name}>
+                          {field.label}{field.required && <span className="required-mark"> *</span>}
+                        </label>
+                        <p className="field-description">{field.description}</p>
+                        {field.type === "textarea" ? (
+                          <textarea
+                            id={field.name}
+                            value={value}
+                            placeholder={field.placeholder}
+                            maxLength={field.maxLength}
+                            aria-invalid={Boolean(error)}
+                            aria-describedby={error ? `${field.name}-error` : undefined}
+                            onChange={(event) => updateField(field.name, event.target.value)}
+                            onBlur={() => setTouched((current) => ({ ...current, [field.name]: true }))}
+                            rows={3}
+                          />
+                        ) : field.type === "select" ? (
+                          <select
+                            id={field.name}
+                            value={value}
+                            aria-invalid={Boolean(error)}
+                            aria-describedby={error ? `${field.name}-error` : undefined}
+                            onChange={(event) => updateField(field.name, event.target.value)}
+                            onBlur={() => setTouched((current) => ({ ...current, [field.name]: true }))}
+                          >
+                            <option value="">Choose an option</option>
+                            {field.options?.map((option) => <option value={option} key={option}>{option}</option>)}
+                          </select>
+                        ) : (
+                          <input
+                            id={field.name}
+                            type="text"
+                            value={value}
+                            placeholder={field.placeholder}
+                            maxLength={field.maxLength}
+                            aria-invalid={Boolean(error)}
+                            aria-describedby={error ? `${field.name}-error` : undefined}
+                            onChange={(event) => updateField(field.name, event.target.value)}
+                            onBlur={() => setTouched((current) => ({ ...current, [field.name]: true }))}
+                          />
+                        )}
+                        <div className="field-meta">
+                          {error ? <span className="field-error" id={`${field.name}-error`}><AlertCircle size={12} />{error}</span> : <span />}
+                          {field.type !== "select" && <span className="character-count">{value.length}/{field.maxLength}</span>}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                {visibleIssues.some((issue) => issue.field === "_form") && (
+                  <p className="form-error"><AlertCircle size={14} />{issueFor("_form")}</p>
+                )}
+                <div className="form-actions">
+                  <span>Inputs are used only to assemble this prompt in your browser.</span>
+                  <button className="assemble-button" type="submit">
+                    Assemble prompt <ArrowRight size={15} />
+                  </button>
+                </div>
+              </form>
+
+              {assembledPrompt && (
+                <div className="prompt-preview">
+                  <div className="preview-heading">
+                    <div>
+                      <span className="section-kicker">STEP 03 · PROMPT ASSEMBLED</span>
+                      <h4>Your structured prompt is ready.</h4>
+                    </div>
+                    <button className="copy-button" type="button" onClick={handleCopy}><Clipboard size={14} /> Copy prompt</button>
+                  </div>
+                  <textarea className="prompt-output" value={assembledPrompt} readOnly rows={14} aria-label="Assembled prompt preview" />
+                  <div className="preview-foot">
+                    <span><ShieldCheck size={14} /> Review the prompt and generated draft before use.</span>
+                    {copyStatus && <span className="copy-status">{copyStatus}</span>}
+                  </div>
+                </div>
+              )}
             </div>
-            <button className="close-selection" onClick={() => setSelectedWorkflow(null)} aria-label="Close selected workflow">×</button>
+            <button className="close-selection" onClick={() => chooseWorkflow(null)} aria-label="Close selected workflow">×</button>
           </section>
         )}
 
