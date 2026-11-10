@@ -57,23 +57,63 @@ See [Responsible AI and safeguards](docs/responsible-ai.md).
 
 ```text
 .
-├── README.md
+├── src/
+│   ├── App.tsx
+│   ├── main.tsx
+│   ├── index.css
+│   └── lib/
+│       ├── templates.ts
+│       ├── promptEngine.ts
+│       ├── promptEngine.test.ts
+│       └── README.md
 ├── docs/
 │   ├── architecture.md
+│   ├── prompt-template-spec.md
 │   └── responsible-ai.md
-└── prompts/
-    └── README.md
+├── prompts/
+│   ├── acquisition.md
+│   ├── stewardship.md
+│   └── retention.md
+├── index.html
+├── package.json
+└── vite.config.ts
+```
+
+## Run the prototype locally
+
+Requirements: Node.js 20 or later and npm.
+
+```bash
+git clone https://github.com/mark2005-git/Fundraising-ai-prompt-library.git
+cd Fundraising-ai-prompt-library
+npm install
+npm run dev
+```
+
+Open the local URL printed by Vite in your browser. The current dashboard is a client-side prototype; it does not connect to an AI model or send form data to a server.
+
+To create a production build:
+
+```bash
+npm run build
+```
+
+To run the unit tests after installing dependencies:
+
+```bash
+npm test
 ```
 
 ## Development roadmap
 
 - [x] Establish project purpose, boundaries, and initial use cases.
 - [x] Document the proposed architecture and responsible-use principles.
-- [ ] Define a consistent prompt-template schema.
-- [ ] Draft acquisition, stewardship, and retention templates.
-- [ ] Create fictional test cases and an evaluation checklist.
-- [ ] Build a simple interface for selecting and filling templates.
-- [ ] Test usability, document limitations, and prepare a demonstration.
+- [x] Define a consistent prompt-template schema.
+- [x] Draft acquisition, stewardship, and retention templates.
+- [x] Add a prompt assembly engine with input validation and unit tests.
+- [x] Build the initial React + TypeScript dashboard for the three workflows.
+- [ ] Add dynamic workflow forms, inline validation, prompt preview, and copy action.
+- [ ] Run automated tests, test usability, document limitations, and prepare a demonstration.
 
 ## Intended audience
 
