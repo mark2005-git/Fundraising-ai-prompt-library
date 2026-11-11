@@ -1,68 +1,97 @@
-# Proposed System Architecture
+# System Architecture
 
 ## 1. Overview
 
-The prototype is a small prompt-workflow library. Its primary job is to help a user select a task, provide the minimum appropriate context, and produce a well-structured prompt that can be reviewed before being used with an AI model.
+The Fundraising AI Prompt Library is a client-side web prototype that helps a user select a fundraising communication workflow, provide relevant context, and assemble a structured prompt for use with a separate AI tool.
 
-The first version should remain deliberately simple. It should demonstrate workflow design and responsible use before introducing accounts, databases, model integrations, or automation.
+The application separates the workflow definitions from the user interface and prompt-assembly logic. This makes the templates easier to inspect, test, and revise.
+
+**Current implementation boundary:** the application builds and previews prompts. It does not call an AI model, store submitted form data in a backend, or send communications.
 
 ## 2. User journey
 
-1. The user opens the library.
-2. The user selects a workflow: acquisition, stewardship, or retention.
-3. The interface explains the workflow's purpose, limitations, and required inputs.
-4. The user supplies fictional or non-sensitive context.
-5. The system validates required fields and assembles the prompt from a reviewed template.
-6. The user inspects and copies the generated prompt.
-7. The user reviews any AI output separately before considering its use.
+1. The user opens the dashboard and selects Acquisition, Stewardship, or Retention.
+2. The application loads the selected workflow's template definition.
+3. The interface renders the form fields defined by that template.
+4. The user enters context and receives validation feedback.
+5. The prompt engine validates the supplied values and assembles the prompt.
+6. The user previews and copies the prompt.
+7. The user may paste it into a separate AI tool; any resulting draft must be reviewed by a person before use.
 
-## 3. Logical components
+## 3. Implemented components
 
-| Component | Responsibility |
+| Component | Implementation |
 |---|---|
-| Workflow catalogue | Lists available workflows and their intended use |
-| Template definitions | Stores instructions, variables, constraints, and output format |
-| Input form | Collects only the information needed for a selected workflow |
-| Input validation | Checks required fields and basic input boundaries |
-| Prompt assembler | Inserts supplied values into the approved template structure |
-| Review guidance | Displays human-review checks and responsible-use reminders |
-| Test fixtures | Provides fictional scenarios for repeatable evaluation |
+| Workflow dashboard | React interface with three selectable workflows |
+| Template definitions | Typed TypeScript objects in `src/lib/templates.ts` |
+| Dynamic input form | Form fields rendered from the selected template definition |
+| Input validation | Required-field, maximum-length, select-option, and total-length checks |
+| Prompt assembler | `assemblePrompt` in `src/lib/promptEngine.ts` |
+| Prompt preview | Read-only preview of the assembled prompt |
+| Copy action | Browser clipboard action initiated by the user |
+| Unit tests | Vitest test file for prompt-engine behaviour |
 
-## 4. Suggested template lifecycle
+## 4. Prompt assembly flow
+
+```text
+Workflow selection
+      |
+      v
+Template definition
+      |
+      v
+Dynamic form fields
+      |
+      v
+User-provided context
+      |
+      v
+Input validation
+      |
+      v
+Prompt assembly
+      |
+      v
+Preview and copy
+      |
+      v
+Separate AI tool (manual user action)
+      |
+      v
+Human review of any generated draft
+```
+
+The prompt assembler labels user-provided values as source material and instructs the downstream AI model not to treat them as higher-priority instructions. The assembled prompt includes the selected template's purpose, instructions, constraints, output format, and review checklist.
+
+## 5. Technology
+
+- React and TypeScript for the client-side application.
+- Vite for development and bundling.
+- TypeScript template definitions to represent workflows and their fields.
+- Vitest for unit testing the prompt-engine functions.
+- Browser Clipboard API for the explicit copy action.
+
+## 6. Template lifecycle
+
+A suggested lifecycle for future template governance is:
 
 Draft → Review → Test → Approve for prototype use → Version → Retire
 
-A template should not be described as approved for organisational deployment merely because it passes prototype tests. Any real deployment would require the relevant organisation's own review and approval.
+A template being available in this independent prototype does not mean it is approved for use by any organisation. Operational adoption would require the relevant organisation's own policy, legal, privacy, security, and communications reviews.
 
-## 5. Initial technical direction
+## 7. Current limitations
 
-Start with a lightweight web interface and structured template files. Keep prompt content separate from presentation logic so templates can be reviewed and tested independently.
+- No model-provider integration; the tool assembles prompts but does not generate final messages.
+- No backend, database, user accounts, or persistent form submissions.
+- No connection to donor-management or campaign systems.
+- No automated message delivery or publication.
+- No automated donor segmentation, scoring, profiling, or eligibility decisions.
+- No formal organisational approval or compliance certification.
 
-A possible implementation path is:
+## 8. Next technical steps
 
-- Frontend: React with TypeScript.
-- Template data: JSON or TypeScript objects with a documented schema.
-- Validation: explicit required-field and length checks.
-- Testing: unit tests for input validation and prompt assembly, plus human review of generated examples.
-- Version control: Git and GitHub.
-
-These are proposed choices, not existing implemented features. The stack can be adjusted after the first template schema is defined.
-
-## 6. Out of scope for the initial prototype
-
-- Connecting to real donor-management systems.
-- Uploading or processing real donor records.
-- Sending donor communications.
-- Automated donor scoring, profiling, or eligibility decisions.
-- Claiming compliance with any organisation's internal policies.
-- Autonomous publication or deployment of generated content.
-
-## 7. Quality criteria
-
-The prototype should be assessed on:
-
-- Clarity: can a non-technical user understand when to use a workflow?
-- Completeness: are required inputs and constraints explicit?
-- Predictability: does the same test input produce a prompt with the expected structure?
-- Safety: are sensitive-data warnings and human-review steps visible?
-- Maintainability: can a template be changed and versioned without rewriting the interface?
+1. Run the production build and unit tests in the development environment.
+2. Test each workflow from selection through copy, including invalid and boundary inputs.
+3. Conduct accessibility and usability checks with representative users.
+4. Expand synthetic evaluation scenarios for unsafe, incomplete, and contradictory inputs.
+5. Consider AI-provider integration only with explicit privacy, security, evaluation, and human-approval controls.
