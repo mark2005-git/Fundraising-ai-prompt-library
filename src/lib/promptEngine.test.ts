@@ -26,7 +26,29 @@ describe("prompt assembly engine", () => {
     expect(issues.some((issue) => issue.field === "campaign_goal")).toBe(true);
   });
 
-  it("rejects invalid select options", () => {
+  it("accepts a custom tone while keeping tone as free text", () => {
+    const customTone = "Persuasive but respectful";
+    const issues = validateInputs(getTemplate("acquisition").fields, {
+      ...validAcquisitionValues,
+      tone: customTone,
+    });
+    expect(issues.some((issue) => issue.field === "tone")).toBe(false);
+    const result = assemblePrompt(getTemplate("acquisition"), {
+      ...validAcquisitionValues,
+      tone: customTone,
+    });
+    expect(result.prompt).toContain(`### Tone and communication style\\n${customTone}`);
+  });
+
+  it("enforces the custom tone character limit", () => {
+    const issues = validateInputs(getTemplate("acquisition").fields, {
+      ...validAcquisitionValues,
+      tone: "x".repeat(151),
+    });
+    expect(issues.some((issue) => issue.field === "tone")).toBe(true);
+  });
+
+  it("rejects invalid channel select options", () => {
     const issues = validateInputs(getTemplate("acquisition").fields, {
       ...validAcquisitionValues,
       channel: "Carrier pigeon",
