@@ -53,12 +53,12 @@ const sharedFields: PromptField[] = [
   },
   {
     name: "tone",
-    label: "Tone",
-    description: "Choose a respectful communication style.",
+    label: "Tone and communication style",
+    description: "Describe the tone you want. You can combine styles or use your own wording. Examples: warm and appreciative, persuasive but respectful, empathetic and reassuring, or confident but professional.",
     required: true,
-    maxLength: 100,
-    type: "select",
-    options: ["Warm and appreciative", "Clear and informative", "Hopeful and encouraging", "Formal and professional"],
+    maxLength: 150,
+    type: "text",
+    placeholder: "e.g. Persuasive but respectful, hopeful and encouraging",
   },
   {
     name: "key_message",
