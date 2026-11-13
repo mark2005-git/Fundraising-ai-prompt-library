@@ -279,3 +279,52 @@ h1, h2, h3, h4, p { margin-top: 0; }
   .form-actions .assemble-button { width: 100%; }
   .prompt-preview { padding: 17px; }
 }
+
+
+/* Softer, lower-glare surfaces for the workflow workspace */
+.builder-panel {
+  background: #e8ebe2;
+  border-color: #cbd4c8;
+  box-shadow: 0 16px 38px rgba(35, 57, 43, .09);
+}
+.builder-panel .selection-icon {
+  background: #d4dfd2;
+  color: #214936;
+}
+.form-intro {
+  background: #dfe6dc;
+  border-color: #cbd7c9;
+  border-left-color: #ad674d;
+}
+.required-note { background: #e9ede4; color: #526858; }
+.form-field input,
+.form-field textarea,
+.form-field select {
+  background: #eef0e8;
+  border-color: #c2cec1;
+  color: #263d31;
+}
+.form-field input:focus,
+.form-field textarea:focus,
+.form-field select:focus {
+  background: #f5f4ec;
+  border-color: #648b70;
+}
+.form-field input::placeholder,
+.form-field textarea::placeholder { color: #778579; }
+.prompt-preview {
+  background: #e4e8df;
+  border-color: #cbd4c8;
+}
+.prompt-output {
+  background: #eceee6;
+  border-color: #c5cec2;
+  color: #263d31;
+}
+.copy-button {
+  background: #d5e0d4;
+  border-color: #b8cbb9;
+  color: #214936;
+}
+.copy-button:hover { background: #245b45; color: #fffdf8; }
+.form-actions { border-top-color: #c7d1c5; }
