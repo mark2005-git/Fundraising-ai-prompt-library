@@ -2,7 +2,7 @@
 
 **An independent, browser-based prototype for building structured, reusable AI prompts for fundraising communication workflows.**
 
-The Fundraising AI Prompt Library explores how prompt engineering can make generative AI easier to use consistently and responsibly in fundraising contexts—particularly for staff who may not have a technical background.
+The Fundraising AI Prompt Library explores how prompt engineering can make generative AI easier to use consistently and responsibly in fundraising contexts -particularly for staff who may not have a technical background.
 
 > **Project status:** Working front-end prototype. The application currently supports three guided workflows, dynamic input forms, basic validation, structured prompt assembly, prompt preview, and copying. It does not currently connect to an AI model or generate the final fundraising message itself.
 
@@ -149,6 +149,6 @@ The prompt templates and interface are illustrative and require further testing 
 
 ## Project ownership and disclaimer
 
-This is an independently developed learning and portfolio project exploring responsible AI workflow design for fundraising communication. It is not affiliated with, commissioned by, or endorsed by UNICEF. No claim is made that it uses, represents, or has been evaluated against UNICEF systems, data, or policies.
+This is an independently developed learning and portfolio project exploring responsible AI workflow design for fundraising communication.
 
 Feedback on usability, prompt structure, evaluation, and responsible AI is welcome.
