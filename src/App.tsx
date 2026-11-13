@@ -306,20 +306,40 @@ function App() {
               </form>
 
               {assembledPrompt && (
-                <div className="prompt-preview">
+                <section className="prompt-preview" aria-label="Assembled prompt">
                   <div className="preview-heading">
-                    <div>
-                      <span className="section-kicker">STEP 03 · PROMPT ASSEMBLED</span>
-                      <h4>Your structured prompt is ready.</h4>
+                    <div className="preview-title">
+                      <span className="section-kicker">STEP 03 · YOUR OUTPUT</span>
+                      <h4>Your prompt is ready to use.</h4>
+                      <p>Review the instructions below, then copy them into the AI tool you use.</p>
                     </div>
-                    <button className="copy-button" type="button" onClick={handleCopy}><Clipboard size={14} /> Copy prompt</button>
+                    <div className="preview-actions">
+                      <span className="ready-indicator"><CheckCircle2 size={14} /> READY</span>
+                      <button className="copy-button" type="button" onClick={handleCopy}>
+                        {copyStatus === "Prompt copied to clipboard." ? <CheckCircle2 size={15} /> : <Clipboard size={15} />}
+                        {copyStatus === "Prompt copied to clipboard." ? "Copied" : "Copy prompt"}
+                      </button>
+                    </div>
                   </div>
-                  <textarea className="prompt-output" value={assembledPrompt} readOnly rows={14} aria-label="Assembled prompt preview" />
-                  <div className="preview-foot">
-                    <span><ShieldCheck size={14} /> Review the prompt and generated draft before use.</span>
+                  <div className="prompt-document">
+                    <div className="document-topline">
+                      <span><FileText size={14} /> STRUCTURED INSTRUCTIONS</span>
+                      <span>{assembledPrompt.length.toLocaleString()} characters</span>
+                    </div>
+                    <textarea className="prompt-output" value={assembledPrompt} readOnly rows={14} aria-label="Assembled prompt preview" />
+                  </div>
+                  <div className="preview-guidance">
+                    <span className="guidance-icon"><ShieldCheck size={17} /></span>
+                    <div>
+                      <strong>Before you use the result</strong>
+                      <p>Paste this prompt into your preferred AI tool. Check the response for accuracy, tone and unsupported claims before sharing it.</p>
+                    </div>
+                  </div>
+                  <div className="preview-foot" role="status" aria-live="polite">
+                    <span>Generated in this browser. Your entries are not sent by this prototype.</span>
                     {copyStatus && <span className="copy-status">{copyStatus}</span>}
                   </div>
-                </div>
+                </section>
               )}
             </div>
             <button className="close-selection" onClick={() => chooseWorkflow(null)} aria-label="Close selected workflow">×</button>
