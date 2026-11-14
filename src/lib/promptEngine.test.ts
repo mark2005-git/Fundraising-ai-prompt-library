@@ -46,7 +46,7 @@ describe("prompt assembly engine", () => {
       ...validAcquisitionValues,
       communication_objective: objective,
     });
-    expect(result.prompt).toContain(`### Communication objective\\n${objective}`);
+    expect(result.prompt).toContain(`### Communication objective\n${objective}`);
   });
 
   it("enforces the custom tone character limit", () => {
