@@ -37,7 +37,7 @@ describe("prompt assembly engine", () => {
       ...validAcquisitionValues,
       tone: customTone,
     });
-    expect(result.prompt).toContain(`### Tone and communication style\\n${customTone}`);
+    expect(result.prompt).toContain(`### Tone and communication style\n${customTone}`);
   });
 
   it("enforces the custom tone character limit", () => {
