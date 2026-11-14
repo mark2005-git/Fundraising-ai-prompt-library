@@ -40,6 +40,15 @@ describe("prompt assembly engine", () => {
     expect(result.prompt).toContain(`### Tone and communication style\n${customTone}`);
   });
 
+  it("includes an optional communication objective in the assembled prompt", () => {
+    const objective = "Encourage informed action without pressure.";
+    const result = assemblePrompt(getTemplate("acquisition"), {
+      ...validAcquisitionValues,
+      communication_objective: objective,
+    });
+    expect(result.prompt).toContain(`### Communication objective\\n${objective}`);
+  });
+
   it("enforces the custom tone character limit", () => {
     const issues = validateInputs(getTemplate("acquisition").fields, {
       ...validAcquisitionValues,
