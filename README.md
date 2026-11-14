@@ -4,7 +4,7 @@
 
 GivingPrompt explores how guided prompt engineering can make generative AI easier to use more consistently and responsibly in fundraising contexts, particularly for people who may not have a technical background.
 
-> **Project status:** Working front-end prototype. The application provides three guided fundraising workflows, context-specific forms, input validation, structured prompt assembly, a prompt preview, and a copy action. The core browser workflow has been manually exercised: users can generate a prompt, change their inputs and see the prompt update, copy the result, and receive warnings when required information is missing. Automated tests and a production build are still part of the remaining verification work.
+> **Project status:** Working front-end prototype. The application provides three guided fundraising workflows, context-specific forms, input validation, structured prompt assembly, a live prompt preview, and a copy action. Users can write a custom tone and optionally provide a communication objective. The automated unit tests and production build have been run successfully, and the three workflows have been manually tested.
 
 This is an independent portfolio project. It is not an official UNICEF product, commissioned project, partnership, or endorsed system. The scenarios are illustrative and do not describe UNICEF's internal processes or policies.
 
@@ -28,15 +28,21 @@ The application provides three workflow templates:
 
 Each workflow presents its own guided form based on its template definition. Users provide the information relevant to that task through fields with descriptions, examples or placeholders, required-field indicators, character limits, and appropriate text, long-text, or selection controls.
 
-### 3. Validate inputs
+### 3. Customize tone and communication objective
+
+The tone field accepts free text rather than limiting users to a fixed list of styles. This allows combinations such as **"persuasive but respectful"**, **"empathetic and reassuring"**, or another tone that suits the communication.
+
+Users can also provide an optional **communication objective** describing what the message should help the reader understand, feel, or do. For example, the objective might be to build trust, explain why a campaign matters, encourage informed action without pressure, or invite a previous supporter to reconnect. When supplied, the objective is included in the assembled prompt; leaving it blank is valid.
+
+### 4. Validate inputs
 
 The prompt engine checks required fields, maximum field lengths, valid selection values, and the combined input-length limit. Validation feedback is displayed in the interface so users can correct missing or invalid information.
 
-### 4. Assemble and update a structured prompt
+### 5. Assemble and update a structured prompt
 
-The application combines the selected workflow template with the context supplied by the user. The resulting prompt includes the task instructions, supplied context, constraints, expected output format, and human-review requirements. When users change their inputs, the assembled prompt reflects those changes.
+The application combines the selected workflow template with the context supplied by the user. The resulting prompt includes the task instructions, supplied context, tone, communication objective when provided, constraints, expected output format, and human-review requirements. When users change their inputs, the assembled prompt reflects those changes.
 
-### 5. Preview and copy
+### 6. Preview and copy
 
 Users can inspect the assembled prompt in the browser and copy it for use in a separate AI tool. The copy action is initiated by the user.
 
@@ -44,10 +50,11 @@ Users can inspect the assembled prompt in the browser and copy it for use in a s
 
 1. Select Donor Acquisition, Donor Stewardship, or Donor Retention.
 2. Complete the workflow-specific form using appropriate, non-sensitive context.
-3. Review validation feedback and correct any missing or invalid inputs.
-4. Generate and inspect the assembled prompt.
-5. Copy the prompt into a separate AI tool if desired.
-6. Review any AI-generated draft for accuracy, fairness, tone, and suitability before real-world use.
+3. Enter a tone and, if useful, a communication objective.
+4. Review validation feedback and correct any missing or invalid inputs.
+5. Generate and inspect the assembled prompt.
+6. Copy the prompt into a separate AI tool if desired.
+7. Review any AI-generated draft for accuracy, fairness, tone, and suitability before real-world use.
 
 **Important:** GivingPrompt assembles prompts; it does not currently connect to an AI model, generate the final fundraising message, or send communications.
 
@@ -61,6 +68,19 @@ Users can inspect the assembled prompt in the browser and copy it for use in a s
 - **Browser Clipboard API** for the user-initiated copy action.
 
 The workflow templates are kept separate from the interface, allowing prompt content and constraints to be reviewed and updated without rewriting the dashboard.
+
+## Testing and verification
+
+The current prototype has undergone the following checks:
+
+- Automated unit tests for prompt assembly and input validation.
+- Production build using `npm run build`.
+- Manual testing of the Donor Acquisition, Donor Stewardship, and Donor Retention workflows.
+- Manual checks of prompt preview updates and the copy action.
+- Manual checks that custom tone wording is included in the assembled prompt.
+- Manual checks that the optional communication objective is included when supplied and can be left blank.
+
+These checks demonstrate the current prototype's functionality; they do not constitute a formal security, accessibility, usability, or production-readiness audit.
 
 ## Responsible-use design
 
@@ -143,11 +163,10 @@ The prompt templates and interface are illustrative and require further testing 
 
 ## Next development steps
 
-- Run the automated unit tests and production build, and resolve any issues found.
-- Complete workflow-by-workflow testing, including missing, contradictory, boundary, and unsafe inputs.
-- Review dependency security audit findings and apply safe updates where appropriate.
-- Improve usability and accessibility based on feedback.
-- Expand synthetic evaluation scenarios and document test results.
+- Expand workflow testing with contradictory, boundary, and unsafe-input scenarios.
+- Conduct a focused accessibility and usability review.
+- Expand synthetic evaluation scenarios and document prompt-quality findings.
+- Review the prompt templates with fundraising practitioners and revise them based on feedback.
 - Evaluate prompt quality with a separate AI provider only after defining appropriate privacy, security, evaluation, and human-review controls.
 
 ## Project ownership and disclaimer
