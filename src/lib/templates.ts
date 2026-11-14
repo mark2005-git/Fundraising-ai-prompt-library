@@ -61,6 +61,15 @@ const sharedFields: PromptField[] = [
     placeholder: "e.g. Persuasive but respectful, hopeful and encouraging",
   },
   {
+    name: "communication_objective",
+    label: "Communication objective",
+    description: "What should this message help the reader understand, feel, or do? Examples: build trust, explain why the campaign matters, encourage informed action without pressure, or invite reconnection.",
+    required: false,
+    maxLength: 400,
+    type: "textarea",
+    placeholder: "e.g. Encourage people to learn more while making the choice feel informed and voluntary.",
+  },
+  {
     name: "key_message",
     label: "Key message",
     description: "What should the reader understand? Use verified, non-confidential information.",
@@ -111,6 +120,7 @@ export const PROMPT_TEMPLATES: PromptTemplate[] = [
       "Explain the campaign goal clearly and connect it to the key message.",
       "Make the call to action clear without pressuring the reader.",
       "Use accessible language suitable for the selected channel.",
+      "Use the supplied communication objective to shape the message where one is provided; do not invent an objective if the field is left blank.",
     ],
     constraints: [
       "Do not invent statistics, impact figures, endorsements, deadlines, or programme details.",
@@ -141,6 +151,7 @@ export const PROMPT_TEMPLATES: PromptTemplate[] = [
       "Write a sincere expression of appreciation based only on the supplied context.",
       "Explain why support matters using careful, non-specific language unless verified facts are provided.",
       "Keep the message focused on gratitude rather than making another ask.",
+      "Use the supplied communication objective to shape the message where one is provided; do not invent an objective if the field is left blank.",
     ],
     constraints: [
       "Do not invent the amount, date, frequency, or method of a contribution.",
@@ -171,6 +182,7 @@ export const PROMPT_TEMPLATES: PromptTemplate[] = [
       "Draft a respectful invitation to reconnect, using the supplied context only.",
       "Acknowledge previous support without assuming why the reader has not engaged recently.",
       "Offer a clear, optional next step and respect the reader's choice.",
+      "Use the supplied communication objective to shape the message where one is provided; do not invent an objective if the field is left blank.",
     ],
     constraints: [
       "Do not infer or state why a person has not donated or engaged.",
